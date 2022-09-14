@@ -39,6 +39,25 @@ bot.command('timetable', (ctx) => {
   );
 });
 
+const TIMETABLE = { 
+  '8.30': '1) 08:30 – 10:05',
+  '10.25': '2) 10:25 – 12:00',
+  '12.20': '3) 12:20 – 13:55',
+  '14.15': '4) 14:15 – 15:50',
+  '16.10': '5) 16:10 – 17:45',
+  '17.55': '6) 17:55 - 19:30',
+};
+
+const WEEKDAYS = [
+  'Понеділок',
+  'Вівторок',
+  'Середа',
+  'Четвер',
+  'Пʼятниця',
+  'Субота',
+  'Неділя',
+];
+
 bot.command('group', async (ctx) => {
   try {
     const groups = mongo.db().collection('group-list');
@@ -93,14 +112,16 @@ bot.command('today', async (ctx) => {
     let week = 'scheduleFirstWeek';
     if (now.currentWeek === 2) week = 'scheduleSecondWeek';
 
-    const todaysPairs = schedule[week][now.currentDay - 1].pairs;
-    let message = '';
+    const todaysPairs = sortPairs(schedule[week][now.currentDay - 1].pairs);
+    let message = `*${WEEKDAYS[now.currentDay - 1]}*` + '\n\n';
+
+    console.log(todaysPairs);
 
     for (const pair of todaysPairs) {
-      message += pair.teacherName + ' ' + pair.name + ' ' + pair.time + '\n';
+      message += `_${TIMETABLE[pair.time]}_ ` + pair.name + ` (${pair.type})\n`;
     }
 
-    ctx.reply(message);
+    ctx.replyWithMarkdown(message);
 
   } catch {
     console.log(err);
@@ -124,14 +145,14 @@ bot.command('tomorrow', async (ctx) => {
     let week = 'scheduleFirstWeek';
     if (now.currentWeek === 2) week = 'scheduleSecondWeek';
 
-    const todaysPairs = schedule[week][now.currentDay].pairs;
-    let message = '';
+    const todmorrowsPairs = sortPairs(schedule[week][now.currentDay].pairs);
+    let message = `*${WEEKDAYS[now.currentDay]}*` + '\n\n';
 
-    for (const pair of todaysPairs) {
-      message += pair.teacherName + ' ' + pair.name + ' ' + pair.time + '\n';
+    for (const pair of todmorrowsPairs) {
+      message += `_${TIMETABLE[pair.time]}_ ` +  pair.name + ` (${pair.type})\n`;
     }
 
-    ctx.reply(message);
+    ctx.replyWithMarkdown(message);
 
   } catch {
     console.log(err);
@@ -149,6 +170,8 @@ const findGroup = async (searchedGroup) => {
     }
   }
 };
+
+const sortPairs = (pairsList) => pairsList.sort((a, b) => a.time - b.time);
 
 const getGroupList = async () => {
   const groupList = await axios
