@@ -17,6 +17,10 @@ const connect = (async () => await mongo.connect())().then(
 bot.telegram.setMyCommands(
   [
     {
+      "command": "timetable",
+      "description": "Розклад дзвінків"
+    },
+    {
       "command": "group",
       "description": "Обрати групу"
     },
@@ -29,11 +33,29 @@ bot.telegram.setMyCommands(
       "description": "Розклад на завтра"
     },
     {
+      "command": "week",
+      "description": "Розклад на цей тиждень"
+    },
+    {
+      "command": "nextweek",
+      "description": "Розклад на наступний тиждень"
+    },
+    {
       "command": "left",
       "description": "Скільки часу залишолось до кінця пари"
     }
   ],
 );
+
+bot.command('timetable', ctx => {
+  ctx.replyWithMarkdown(
+    '_1 пара_:  08:30 – 10:05\n' +
+    '_2 пара_:  10:25 – 12:00\n' +
+    '_3 пара_:  12:20 – 13:55\n' +
+    '_4 пара_:  14:15 – 15:50\n' +
+    '_5 пара_:  16:10 – 17:45\n' +
+    '_6 пара_:  17:55 – 19:30');
+});
 
 bot.command('group', async (ctx) => {
   try {
@@ -103,7 +125,7 @@ bot.command('today', async (ctx) => {
     }
 
     for (const pair of todaysPairs) {
-      message += `_${TIMETABLE[pair.time]}_ ` + pair.name + ` (${pair.type})\n`;
+      message += `${TIMETABLE[pair.time]} ` + pair.name + ` (${pair.type})\n`;
     }
 
     ctx.replyWithMarkdown(message);
@@ -139,7 +161,7 @@ bot.command('tomorrow', async (ctx) => {
     }
 
     for (const pair of todmorrowsPairs) {
-      message += `_${TIMETABLE[pair.time]}_ ` +  pair.name + ` (${pair.type})\n`;
+      message += `${TIMETABLE[pair.time]} ` +  pair.name + ` (${pair.type})\n`;
     }
 
     ctx.replyWithMarkdown(message);
@@ -185,6 +207,82 @@ bot.command('left', async ctx => {
   } catch (err) {
     console.log(err);
     ctx.reply('Помилка');
+  }
+});
+
+bot.command('week', async ctx => {
+  try {
+    const groups = mongo.db().collection('group-list');
+  
+    const group = await groups.findOne({
+      chatId: ctx.update.message.chat.id,
+    });
+  
+    const now = await currentTime();
+    let week = 'scheduleFirstWeek';
+    if (now.currentWeek === 1) week = 'scheduleSecondWeek';
+  
+  
+    const schedule = (await getSchedule(group.groupId))[week];
+  
+    let message = '';
+    let dayCounter = 0;
+  
+    for (const day of schedule) {
+      message += `\n*${WEEKDAYS[dayCounter]}*\n`;
+      dayCounter++;
+      if (day.pairs.length) {
+        for (const pair of sortPairs(day.pairs)) {
+          message += `${TIMETABLE[pair.time]} ` +  pair.name + ` (${pair.type})\n`;
+        }
+      } else {
+        const emoji = String.fromCodePoint(0x1F973);
+        message += `_Пар немає, вихідний ${emoji}_\n`;
+      }
+    }
+  
+    ctx.replyWithMarkdown(message);
+  } catch (err) {
+    console.log(err);
+    ctx.reply('Помилка!');
+  }
+});
+
+bot.command('nextweek', async ctx => {
+  try {
+    const groups = mongo.db().collection('group-list');
+  
+    const group = await groups.findOne({
+      chatId: ctx.update.message.chat.id,
+    });
+  
+    const now = await currentTime();
+    let week = 'scheduleSecondWeek';
+    if (now.currentWeek === 1) week = 'scheduleFirstWeek';
+  
+  
+    const schedule = (await getSchedule(group.groupId))[week];
+  
+    let message = '';
+    let dayCounter = 0;
+  
+    for (const day of schedule) {
+      message += `\n*${WEEKDAYS[dayCounter]}*\n`;
+      dayCounter++;
+      if (day.pairs.length) {
+        for (const pair of sortPairs(day.pairs)) {
+          message += `${TIMETABLE[pair.time]} ` +  pair.name + ` (${pair.type})\n`;
+        }
+      } else {
+        const emoji = String.fromCodePoint(0x1F973);
+        message += `_Пар немає, вихідний ${emoji}_\n`;
+      }
+    }
+  
+    ctx.replyWithMarkdown(message);
+  } catch (err) {
+    console.log(err);
+    ctx.reply('Помилка!');
   }
 });
 

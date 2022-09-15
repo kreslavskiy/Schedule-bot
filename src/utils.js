@@ -8,25 +8,32 @@ const getPairEnd = () => {
   const minutes = today.getMinutes();
   const now = hours + minutes / 100;
 
-
   for (const [time, data] of Object.entries(PAIRS_INTERVALS)) {
     if (now <= time) return data;
   }
 };
 
 const convertMilisecsToMins = (millis) => {
-  const minutes = Math.floor(millis / 60000);
-  const seconds = ((millis % 60000) / 1000).toFixed(0);
-  return `*${minutes} хв ${(seconds < 10 ? '0' : '')}${seconds} сек*`;
-}
+  const secs = Math.floor((millis / 1000) % 60);
+  const mins = Math.floor((millis / (1000 * 60)) % 60);
+  const hours = Math.floor((millis / (1000 * 60 * 60)) % 24);
 
-const sortPairs = (pairsList) => pairsList.sort((firstPair, secondPair) => firstPair.time - secondPair.time);
+  return hours
+    ? `*${hours} год ${mins} хв ${secs < 10 ? '0' + secs : secs} с*`
+    : `${mins} хв ${secs < 10 ? '0' + secs : secs} с*`;
+};
+
+const sortPairs = (pairsList) =>
+  pairsList.sort((firstPair, secondPair) => firstPair.time - secondPair.time);
 
 const validateGroupName = (groupName) => {
   const normalized = groupName.replace(/[._-\s]/g, '');
-  
-  let validated = normalized.slice(0, 2).toUpperCase().concat('-' + normalized.slice(2));
-  
+
+  let validated = normalized
+    .slice(0, 2)
+    .toUpperCase()
+    .concat('-' + normalized.slice(2));
+
   for (const [latin, cyrillic] of Object.entries(LATIN_TO_CYRILLIC)) {
     if (validated.includes(latin)) {
       validated = validated.replaceAll(latin, cyrillic);
@@ -36,4 +43,9 @@ const validateGroupName = (groupName) => {
   return validated;
 };
 
-module.exports = { getPairEnd, sortPairs, convertMilisecsToMins, validateGroupName };
+module.exports = {
+  getPairEnd,
+  sortPairs,
+  convertMilisecsToMins,
+  validateGroupName,
+};
