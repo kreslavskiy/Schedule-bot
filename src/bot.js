@@ -66,12 +66,15 @@ bot.command('group', async (ctx) => {
       );
     }
 
-    ctx.reply(`Ви обрали групу ${group.name}, ${group.faculty}`, {
+    let faculty = `(${group.faculty})`;
+    if (!group.faculty) faculty = '';
+
+    ctx.reply(`Ви обрали групу ${group.name} ${faculty}`, {
       reply_to_message_id: ctx.message.message_id,
     });
   } catch (err) {
     console.log(err);
-    ctx.reply('Не можу знайти цю групу, спробуйте ввести у форматі АА-11', {
+    ctx.reply('Не можу знайти цю групу, спробуйте ввести у форматі XX-XX', {
       reply_to_message_id: ctx.message.message_id,
     });
   }
@@ -93,6 +96,11 @@ bot.command('today', async (ctx) => {
 
     const todaysPairs = sortPairs(schedule[week][now.currentDay - 1].pairs);
     let message = `*${WEEKDAYS[now.currentDay - 1]}*` + '\n\n';
+
+    if (!todaysPairs.length) {
+      const emoji = String.fromCodePoint(0x1F973);
+      message += `_Пар немає, вихідний ${emoji}_`;
+    }
 
     for (const pair of todaysPairs) {
       message += `_${TIMETABLE[pair.time]}_ ` + pair.name + ` (${pair.type})\n`;
@@ -125,13 +133,18 @@ bot.command('tomorrow', async (ctx) => {
     const todmorrowsPairs = sortPairs(schedule[week][now.currentDay].pairs);
     let message = `*${WEEKDAYS[now.currentDay]}*` + '\n\n';
 
+    if (!todmorrowsPairs.length) {
+      const emoji = String.fromCodePoint(0x1F973);
+      message += `_Пар немає, вихідний ${emoji}_`;
+    }
+
     for (const pair of todmorrowsPairs) {
       message += `_${TIMETABLE[pair.time]}_ ` +  pair.name + ` (${pair.type})\n`;
     }
 
     ctx.replyWithMarkdown(message);
 
-  } catch {
+  } catch (err) {
     console.log(err);
     ctx.reply('Спочатку оберіть групу за допомогою команди group', {
       reply_to_message_id: ctx.message.message_id,
