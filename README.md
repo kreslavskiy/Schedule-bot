@@ -35,8 +35,10 @@ npm run start
 
 ## Available commands
 
+- /timetable — lessons timetable
 - /group — link chat to group
 - /today — schedule for today
 - /tomorrow — schedule for tomorrow
+- /week — schedule for week
+- /nextweek — schedule for next week
 - /left — show how much time is left untill the end of lesson/break
-
