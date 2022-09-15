@@ -4,7 +4,7 @@ const { Telegraf } = require('telegraf');
 const { MongoClient } = require('mongodb');
 const { findGroup, getSchedule, currentTime } = require('../api/api.js');
 const { TIMETABLE, WEEKDAYS } = require('./collections.js');
-const { getPairEnd, sortPairs, convertMilisecsToMins } = require('./utils.js');
+const { getPairEnd, sortPairs, convertMilisecsToMins, validateGroupName } = require('./utils.js');
 require('dotenv').config();
 
 const bot = new Telegraf(process.env.BOT_TOKEN);
@@ -15,7 +15,7 @@ const connect = (async () => await mongo.connect())().then(
 );
 
 bot.telegram.setMyCommands(
-[
+  [
     {
       "command": "group",
       "description": "Обрати групу"
@@ -39,7 +39,7 @@ bot.command('group', async (ctx) => {
   try {
     const groups = mongo.db().collection('group-list');
 
-    const searchedGroup = ctx.message.text.split(' ').slice(1).join(' ');
+    const searchedGroup = validateGroupName(ctx.message.text.split(' ').slice(1).join(' '));
     const group = await findGroup(searchedGroup);
 
     const chat = await groups.findOne({
@@ -66,10 +66,12 @@ bot.command('group', async (ctx) => {
       );
     }
 
-    ctx.reply(`Ви обрали групу ${group.name}, ${group.faculty}`);
+    ctx.reply(`Ви обрали групу ${group.name}, ${group.faculty}`, {
+      reply_to_message_id: ctx.message.message_id,
+    });
   } catch (err) {
     console.log(err);
-    ctx.reply('Не можу знайти цю групу', {
+    ctx.reply('Не можу знайти цю групу, спробуйте ввести у форматі АА-11', {
       reply_to_message_id: ctx.message.message_id,
     });
   }
@@ -167,7 +169,6 @@ bot.command('left', async ctx => {
     } else {
       ctx.reply('Зараз немає пари!')
     }
-
   } catch (err) {
     console.log(err);
     ctx.reply('Помилка');
