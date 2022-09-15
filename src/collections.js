@@ -33,8 +33,6 @@ const WEEKDAYS = [
   'Неділя',
 ];
 
-
-
 const LATIN_TO_CYRILLIC = {
   A: 'А',
   B: 'Б',
