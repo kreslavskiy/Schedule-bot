@@ -20,7 +20,7 @@ const convertMilisecsToMins = (millis) => {
 
   return hours
     ? `*${hours} год ${mins} хв ${secs < 10 ? '0' + secs : secs} с*`
-    : `${mins} хв ${secs < 10 ? '0' + secs : secs} с*`;
+    : `*${mins} хв ${secs < 10 ? '0' + secs : secs} с*`;
 };
 
 const sortPairs = (pairsList) =>
