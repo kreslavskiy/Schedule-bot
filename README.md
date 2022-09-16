@@ -36,7 +36,7 @@ npm run start
 ## Available commands
 
 - /timetable — lessons timetable
-- /group — link chat to group
+- /group <XX-XX> (XX-XX is name of the group) — link chat to group
 - /today — schedule for today
 - /tomorrow — schedule for tomorrow
 - /week — schedule for week
