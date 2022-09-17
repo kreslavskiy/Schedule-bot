@@ -257,7 +257,7 @@ bot.command('week', async ctx => {
       message += `\n*${WEEKDAYS[dayCounter]}*\n`;
       dayCounter++;
       if (day.pairs.length) {
-        for (const pair of sortPairs(day.pairs)) {
+        for (const pair of sortPairs(day)) {
           message += `${TIMETABLE[pair.time]} ` +  pair.name + ` (${pair.type})\n`;
         }
       } else {
@@ -295,7 +295,7 @@ bot.command('nextweek', async ctx => {
       message += `\n*${WEEKDAYS[dayCounter]}*\n`;
       dayCounter++;
       if (day.pairs.length) {
-        for (const pair of sortPairs(day.pairs)) {
+        for (const pair of sortPairs(day)) {
           message += `${TIMETABLE[pair.time]} ` +  pair.name + ` (${pair.type})\n`;
         }
       } else {
