@@ -69,31 +69,43 @@ bot.command('group', async (ctx) => {
     });
 
     if (!chat) {
+
+      ctx.reply(`Ви обрали групу ${group.name} ${group.faculty ? group.faculty : ''}`, {
+        reply_to_message_id: ctx.message.message_id,
+      });
+
       await groups.insertOne({
         chatId: ctx.update.message.chat.id,
         groupId: group.id,
         groupName: group.name,
         faculty: group.faculty,
       });
+
     } else {
-      await groups.updateOne(
-        { chatId: ctx.update.message.chat.id },
-        {
-          $set: {
-            groupId: group.id,
-            groupName: group.name,
-            faculty: group.faculty,
-          },
-        }
-      );
+      if (ctx.message.text.split(' ').slice(1).join(' ')) {
+
+        ctx.reply(`Ви обрали групу ${group.name} ${group.faculty ? group.faculty : ''}`, {
+          reply_to_message_id: ctx.message.message_id,
+        });
+
+        await groups.updateOne(
+          { chatId: ctx.update.message.chat.id },
+          {
+            $set: {
+              groupId: group.id,
+              groupName: group.name,
+              faculty: group.faculty,
+            },
+          }
+        );
+
+      } else {
+        ctx.reply(`Обрана група: ${chat.groupName} (${chat.faculty})`, {
+          reply_to_message_id: ctx.message.message_id,
+        });
+      }
     }
 
-    let faculty = `(${group.faculty})`;
-    if (!group.faculty) faculty = '';
-
-    ctx.reply(`Ви обрали групу ${group.name} ${faculty}`, {
-      reply_to_message_id: ctx.message.message_id,
-    });
   } catch (err) {
     console.log(err);
     ctx.reply('Не можу знайти цю групу, спробуйте ввести у форматі XX-XX', {
