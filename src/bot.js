@@ -70,7 +70,7 @@ bot.command('group', async (ctx) => {
 
     if (!chat) {
 
-      ctx.reply(`Ви обрали групу ${group.name} ${group.faculty ? group.faculty : ''}`, {
+      ctx.reply(`Ви обрали групу ${group.name} (${group.faculty ? group.faculty : ''})`, {
         reply_to_message_id: ctx.message.message_id,
       });
 
@@ -84,7 +84,7 @@ bot.command('group', async (ctx) => {
     } else {
       if (ctx.message.text.split(' ').slice(1).join(' ')) {
 
-        ctx.reply(`Ви обрали групу ${group.name} ${group.faculty ? group.faculty : ''}`, {
+        ctx.reply(`Ви обрали групу ${group.name} (${group.faculty ? group.faculty : ''})`, {
           reply_to_message_id: ctx.message.message_id,
         });
 
