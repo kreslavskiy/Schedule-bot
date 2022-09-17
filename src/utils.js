@@ -23,8 +23,9 @@ const convertMilisecsToMins = (millis) => {
     : `*${mins} хв ${secs < 10 ? '0' + secs : secs} с*`;
 };
 
-const sortPairs = (pairsList) =>
-  pairsList.sort((firstPair, secondPair) => firstPair.time - secondPair.time);
+const sortPairs = (pairsList) => {
+  if (pairsList) return pairsList.pairs.sort((firstPair, secondPair) => firstPair.time - secondPair.time);
+}
 
 const validateGroupName = (groupName) => {
   const normalized = groupName.replace(/[._-\s]/g, '');

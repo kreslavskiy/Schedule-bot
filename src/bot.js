@@ -47,6 +47,18 @@ bot.telegram.setMyCommands(
   ],
 );
 
+bot.help(ctx => {
+  ctx.replyWithMarkdown(
+    '/timetable – *подивитись розклад дзвінків*\n' +
+    '/group _<код групи>_ – *змінити групу або подивитись обрану*\n' +
+    '/today – *розклад на сьогодні для обраної групи*\n' +
+    '/tomorrow – *розклад на завтра для обраної групи*\n' +
+    '/week – *розклад на цей тиждень*\n' +
+    '/nextweek – *розклад на наступний тиждень*\n' +
+    '/left – *подивитись скільки часу залишилось до кінця пари або перерви*'
+  );
+})
+
 bot.command('timetable', ctx => {
   ctx.replyWithMarkdown(
     '_1 пара_:  08:30 – 10:05\n' +
@@ -128,16 +140,16 @@ bot.command('today', async (ctx) => {
     let week = 'scheduleFirstWeek';
     if (now.currentWeek === 1) week = 'scheduleSecondWeek';
 
-    const todaysPairs = sortPairs(schedule[week][now.currentDay - 1].pairs);
+    const todaysPairs = sortPairs(schedule[week][now.currentDay - 1]);
     let message = `*${WEEKDAYS[now.currentDay - 1]}*` + '\n\n';
 
-    if (!todaysPairs.length) {
+    if (!todaysPairs) {
       const emoji = String.fromCodePoint(0x1F973);
       message += `_Пар немає, вихідний ${emoji}_`;
-    }
-
-    for (const pair of todaysPairs) {
-      message += `${TIMETABLE[pair.time]} ` + pair.name + ` (${pair.type})\n`;
+    } else {
+      for (const pair of todaysPairs) {
+        message += `${TIMETABLE[pair.time]} ` + pair.name + ` (${pair.type})\n`;
+      }
     }
 
     ctx.replyWithMarkdown(message);
@@ -164,17 +176,18 @@ bot.command('tomorrow', async (ctx) => {
     let week = 'scheduleFirstWeek';
     if (now.currentWeek === 1) week = 'scheduleSecondWeek';
 
-    const todmorrowsPairs = sortPairs(schedule[week][now.currentDay].pairs);
+    const todmorrowsPairs = sortPairs(schedule[week][now.currentDay]);
     let message = `*${WEEKDAYS[now.currentDay]}*` + '\n\n';
 
-    if (!todmorrowsPairs.length) {
+    if (!todmorrowsPairs) {
       const emoji = String.fromCodePoint(0x1F973);
       message += `_Пар немає, вихідний ${emoji}_`;
+    } else {
+      for (const pair of todmorrowsPairs) {
+        message += `${TIMETABLE[pair.time]} ` +  pair.name + ` (${pair.type})\n`;
+      }
     }
 
-    for (const pair of todmorrowsPairs) {
-      message += `${TIMETABLE[pair.time]} ` +  pair.name + ` (${pair.type})\n`;
-    }
 
     ctx.replyWithMarkdown(message);
 
