@@ -176,6 +176,8 @@ bot.command('tomorrow', async (ctx) => {
     let week = 'scheduleFirstWeek';
     //week = 'scheduleSecondWeek';
 
+    if (!now.data.currentDay) week = 'scheduleSecondWeek';
+
     const todmorrowsPairs = sortPairs(schedule[week][now.currentDay]);
     let message = `*${WEEKDAYS[now.currentDay]}*` + '\n\n';
 
