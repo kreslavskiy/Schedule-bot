@@ -173,10 +173,12 @@ bot.command('tomorrow', async (ctx) => {
     const now = await currentTime();
     const schedule = await getSchedule(group.groupId);
 
+    console.log(now);
+
     let week = 'scheduleFirstWeek';
     //week = 'scheduleSecondWeek';
 
-    if (!now.data.currentDay) week = 'scheduleSecondWeek';
+    if (!now.currentDay) week = 'scheduleSecondWeek';
 
     const todmorrowsPairs = sortPairs(schedule[week][now.currentDay]);
     let message = `*${WEEKDAYS[now.currentDay]}*` + '\n\n';
