@@ -137,7 +137,7 @@ bot.command('today', async (ctx) => {
     const now = await currentTime();
     const schedule = await getSchedule(group.groupId);
 
-    let week = 'scheduleFirstWeek';
+    let week = 'scheduleSecondWeek';
     //week = 'scheduleSecondWeek';
 
     const todaysPairs = sortPairs(schedule[week][now.currentDay - 1]);
@@ -175,10 +175,10 @@ bot.command('tomorrow', async (ctx) => {
 
     console.log(now);
 
-    let week = 'scheduleFirstWeek';
+    let week = 'scheduleSecondWeek';
     //week = 'scheduleSecondWeek';
 
-    if (!now.currentDay) week = 'scheduleSecondWeek';
+    if (!now.currentDay) week = 'scheduleFirstWeek';
 
     const todmorrowsPairs = sortPairs(schedule[week][now.currentDay]);
     let message = `*${WEEKDAYS[now.currentDay]}*` + '\n\n';
@@ -248,8 +248,8 @@ bot.command('week', async ctx => {
     });
   
     const now = await currentTime();
-    let week = 'scheduleFirstWeek';
-    //week = 'scheduleSecondWeek';
+    //let week = 'scheduleFirstWeek';
+    let week = 'scheduleSecondWeek';
   
   
     const schedule = (await getSchedule(group.groupId))[week];
@@ -286,8 +286,8 @@ bot.command('nextweek', async ctx => {
     });
   
     const now = await currentTime();
-    let week = 'scheduleSecondWeek';
-    //week = 'scheduleFirstWeek';
+    //let week = 'scheduleSecondWeek';
+    let week = 'scheduleFirstWeek';
   
   
     const schedule = (await getSchedule(group.groupId))[week];
