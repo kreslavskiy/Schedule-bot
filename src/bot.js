@@ -138,8 +138,8 @@ bot.command('today', async (ctx) => {
     const schedule = await getSchedule(group.groupId);
 
     let week = 'scheduleSecondWeek';
-    //week = 'scheduleSecondWeek';
-
+    if (now.currentWeek === 2) week = 'scheduleSecondWeek';
+    
     const todaysPairs = sortPairs(schedule[week][now.currentDay - 1]);
     let message = `*${WEEKDAYS[now.currentDay - 1]}*` + '\n\n';
 
@@ -175,10 +175,13 @@ bot.command('tomorrow', async (ctx) => {
 
     console.log(now);
 
-    let week = 'scheduleSecondWeek';
-    //week = 'scheduleSecondWeek';
+    let week = 'scheduleFirstWeek';
+    if (now.currentWeek === 2) {
+      week = 'scheduleSecondWeek';
+      if (!now.currentDay) week = 'scheduleFirstWeek';
+    }
 
-    if (!now.currentDay) week = 'scheduleFirstWeek';
+    if (!now.currentDay) week = 'scheduleSecondWeek';
 
     const todmorrowsPairs = sortPairs(schedule[week][now.currentDay]);
     let message = `*${WEEKDAYS[now.currentDay]}*` + '\n\n';
@@ -248,8 +251,8 @@ bot.command('week', async ctx => {
     });
   
     const now = await currentTime();
-    //let week = 'scheduleFirstWeek';
-    let week = 'scheduleSecondWeek';
+    let week = 'scheduleFirstWeek';
+    if (now.currentWeek === 2) week = 'scheduleSecondWeek';
   
   
     const schedule = (await getSchedule(group.groupId))[week];
@@ -286,10 +289,9 @@ bot.command('nextweek', async ctx => {
     });
   
     const now = await currentTime();
-    //let week = 'scheduleSecondWeek';
-    let week = 'scheduleFirstWeek';
-  
-  
+    let week = 'scheduleSecondWeek';
+    if (now.currentWeek === 2) week = 'scheduleFirstWeek';
+
     const schedule = (await getSchedule(group.groupId))[week];
   
     let message = '';
