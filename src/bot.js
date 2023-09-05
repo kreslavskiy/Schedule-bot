@@ -231,7 +231,7 @@ bot.command('left', async ctx => {
 
       const left = neededTime - now;
 
-      ctx.replyWithMarkdown(`До початку ${pairEnd.type} залишилося ${convertMilisecsToMins(left)}`);
+      ctx.replyWithMarkdown(`До кінця ${pairEnd.type} залишилося ${convertMilisecsToMins(left)}`);
 
     } else {
       ctx.reply('Зараз немає пари!')
