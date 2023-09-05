@@ -42,7 +42,7 @@ bot.telegram.setMyCommands(
     },
     {
       "command": "left",
-      "description": "Скільки часу залишолось до кінця пари"
+      "description": "Скільки часу залишилось до початку наступної пари або перерви"
     }
   ],
 );
@@ -55,7 +55,7 @@ bot.help(ctx => {
     '/tomorrow – *розклад на завтра для обраної групи*\n' +
     '/week – *розклад на цей тиждень*\n' +
     '/nextweek – *розклад на наступний тиждень*\n' +
-    '/left – *подивитись скільки часу залишилось до кінця пари або перерви*'
+    '/left – *подивитись скільки часу залишилось до початку наступної пари або перерви*'
   );
 })
 
@@ -231,7 +231,7 @@ bot.command('left', async ctx => {
 
       const left = neededTime - now;
 
-      ctx.replyWithMarkdown(`До кінця ${pairEnd.type} залишилося ${convertMilisecsToMins(left)}`);
+      ctx.replyWithMarkdown(`До початку ${pairEnd.type} залишилося ${convertMilisecsToMins(left)}`);
 
     } else {
       ctx.reply('Зараз немає пари!')
