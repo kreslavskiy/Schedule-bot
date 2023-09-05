@@ -1,7 +1,7 @@
 'use strict';
 
 const PAIRS_INTERVALS = {
-  10.05: { interval: [10, 5], type: 'пари перерви' },
+  10.05: { interval: [10, 5], type: 'перерви' },
   10.25: { interval: [10, 25], type: 'пари' },
   12.00: { interval: [12, 0], type: 'перерви ' },
   12.20: { interval: [12, 20], type: 'пари' },
