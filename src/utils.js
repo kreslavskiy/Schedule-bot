@@ -9,7 +9,7 @@ const getPairEnd = () => {
   const now = hours + minutes / 100;
 
   for (const [time, data] of Object.entries(PAIRS_INTERVALS)) {
-    if (now < time) return data;
+    if (now < time) return data === 'пари' ? 'перерви' : 'пари'
   }
 };
 
