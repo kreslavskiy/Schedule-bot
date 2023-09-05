@@ -1,17 +1,25 @@
 'use strict';
+const { PAIRS, BREAKS, LATIN_TO_CYRILLIC } = require('./collections.js');
+process.env.TZ = "Europe/Kyiv";
 
-const { PAIRS_INTERVALS, LATIN_TO_CYRILLIC } = require('./collections.js');
+const getLeftTime = () => {
+  const now = new Date();
+  const currentTime = now.getHours() + now.getMinutes() / 100 + now.getSeconds() / 10000;
 
-const getPairEnd = () => {
-  const today = new Date();
-  const hours = today.getHours();
-  const minutes = today.getMinutes();
-  const now = hours + minutes / 100;
-
-  for (const [time, data] of Object.entries(PAIRS_INTERVALS)) {
-    if (now < time) return data;
+  for (const pairIndex in PAIRS) {
+    const [start, end] = PAIRS[pairIndex];
+    if (currentTime >= start && currentTime < end) {
+      return end - currentTime;
+    }
   }
-};
+
+  for (const breakIndex in BREAKS) {
+    const [start, end] = BREAKS[breakIndex];
+    if (currentTime >= start && currentTime < end) {
+      return end - currentTime;
+    }
+  }
+}
 
 const convertMilisecsToMins = (millis) => {
   const secs = Math.floor((millis / 1000) % 60);
@@ -45,7 +53,7 @@ const validateGroupName = (groupName) => {
 };
 
 module.exports = {
-  getPairEnd,
+  getLeftTime,
   sortPairs,
   convertMilisecsToMins,
   validateGroupName,

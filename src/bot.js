@@ -4,8 +4,9 @@ const { Telegraf } = require('telegraf');
 const { MongoClient } = require('mongodb');
 const { findGroup, getSchedule, currentTime } = require('../api/api.js');
 const { TIMETABLE, WEEKDAYS } = require('./collections.js');
-const { getPairEnd, sortPairs, convertMilisecsToMins, validateGroupName } = require('./utils.js');
+const { getLeftTime, sortPairs, convertMilisecsToMins, validateGroupName } = require('./utils.js');
 require('dotenv').config();
+process.env.TZ = "Europe/Kyiv";
 
 const bot = new Telegraf(process.env.BOT_TOKEN);
 const mongo = new MongoClient(process.env.DB_URL);
@@ -42,7 +43,7 @@ bot.telegram.setMyCommands(
     },
     {
       "command": "left",
-      "description": "Скільки часу залишилось до початку наступної пари або перерви"
+      "description": "Скільки часу залишилось до початку пари або перерви"
     }
   ],
 );
@@ -55,7 +56,7 @@ bot.help(ctx => {
     '/tomorrow – *розклад на завтра для обраної групи*\n' +
     '/week – *розклад на цей тиждень*\n' +
     '/nextweek – *розклад на наступний тиждень*\n' +
-    '/left – *подивитись скільки часу залишилось до початку наступної пари або перерви*'
+    '/left – *подивитись скільки часу залишилось до початку пари або перерви*'
   );
 })
 
@@ -207,40 +208,9 @@ bot.command('tomorrow', async (ctx) => {
 });
 
 bot.command('left', async ctx => {
-  try {
-    // const time = await currentTime();
-
-    // let week = 'scheduleFirstWeek';
-    // if (time.currentWeek === 1) week = 'scheduleSecondWeek';
-
-    // const groups = mongo.db().collection('group-list');
-
-    // const group = await groups.findOne({
-    //   chatId: ctx.update.message.chat.id,
-    // });
-
-    // const schedule = await getSchedule(group.groupId);
-
-    const pairEnd = getPairEnd();
-
-    if (pairEnd) {
-      const now = Date.now();
-      const today = new Date();
-
-      const neededTime = new Date(today.getFullYear(), today.getMonth(), today.getDate(), ...pairEnd.interval, 0, 0);
-
-      const left = neededTime - now;
-
-      ctx.replyWithMarkdown(`До кінця ${pairEnd.type} залишилося ${convertMilisecsToMins(left)}`);
-
-    } else {
-      ctx.reply('Зараз немає пари!')
-    }
-  } catch (err) {
-    console.log(err);
-    ctx.reply('Помилка');
-  }
-});
+  const leftTime = getLeftTime();
+  ctx.replyWithMarkdown(`*До наступної пари залишилось*: ${convertMilisecsToMins(leftTime * 60 * 60 * 1000)}`);
+})
 
 bot.command('week', async ctx => {
   try {
