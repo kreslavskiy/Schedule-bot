@@ -212,7 +212,7 @@ bot.command('left', async ctx => {
   const leftTime = getLeftTime(); // Left time in milliseconds
   const current = getCurrent(); // Determine if it's a break or a pair
 
-  ctx.reply(`Зараз ${now.getHours()}:${now.getMinutes() < 10 ? '0' + now.getMinutes() : now.getMinutes()}`);
+  ctx.reply(`Зараз ${now.getHours()}:${now.getMinutes() < 10 ? '0' + now.getMinutes() : now.getMinutes()}.`);
 
   if (current.pair) {
     ctx.reply(`До початку перерви залишилось ${parseTime(leftTime)}.`);
