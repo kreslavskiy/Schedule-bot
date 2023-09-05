@@ -6,7 +6,6 @@ const { findGroup, getSchedule, currentTime } = require('../api/api.js');
 const { TIMETABLE, WEEKDAYS } = require('./collections.js');
 const { getLeftTime, getCurrent, sortPairs, parseTime, validateGroupName } = require('./utils.js');
 require('dotenv').config();
-process.env.TZ = "Europe/Kyiv";
 
 const bot = new Telegraf(process.env.BOT_TOKEN);
 const mongo = new MongoClient(process.env.DB_URL);

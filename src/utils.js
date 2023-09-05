@@ -1,6 +1,5 @@
 'use strict';
 const { PAIRS, BREAKS, LATIN_TO_CYRILLIC } = require('./collections.js');
-process.env.TZ = "Europe/Kyiv";
 
 // Get time left to the end of the current pair or break
 const getLeftTime = () => {
