@@ -4,7 +4,7 @@ const { Telegraf } = require('telegraf');
 const { MongoClient } = require('mongodb');
 const { findGroup, getSchedule, currentTime } = require('../api/api.js');
 const { TIMETABLE, WEEKDAYS } = require('./collections.js');
-const { getLeftTime, sortPairs, convertMilisecsToMins, validateGroupName } = require('./utils.js');
+const { getLeftTime, getCurrent, sortPairs, parseTime, validateGroupName } = require('./utils.js');
 require('dotenv').config();
 process.env.TZ = "Europe/Kyiv";
 
@@ -208,8 +208,16 @@ bot.command('tomorrow', async (ctx) => {
 });
 
 bot.command('left', async ctx => {
-  const leftTime = getLeftTime();
-  ctx.replyWithMarkdown(`*До наступної пари залишилось*: ${convertMilisecsToMins(leftTime * 60 * 60 * 1000)}`);
+  const leftTime = getLeftTime(); // Left time in milliseconds
+  const current = getCurrent(); // Determine if it's a break or a pair
+
+  if (current.pair) {
+    ctx.reply(`До початку перерви залишилось ${parseTime(leftTime)}.`);
+  }
+
+  if (current.break) {
+    ctx.reply(`До початку пари залишилось ${parseTime(leftTime)}.`);
+  }
 })
 
 bot.command('week', async ctx => {
@@ -229,8 +237,8 @@ bot.command('week', async ctx => {
       if (!now.currentDay) week = 'scheduleSecondWeek';
     }
     console.log(week);
-  
-  
+
+
     const schedule = (await getSchedule(group.groupId))[week];
   
     let message = '';
