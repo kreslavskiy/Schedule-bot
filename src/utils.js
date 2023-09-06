@@ -32,54 +32,36 @@ const getLeftTime = () => {
 const getCurrent = () => {
   const now = new Date();
 
-  // Object to determine if it's a pair or a break
+  const setCurrent = (timeArray, type) => {
+    for (const [start, end] of timeArray) {
+      const startTime = new Date();
+      startTime.setHours(start.split('.')[0]);
+      startTime.setMinutes(start.split('.')[1]);
+      startTime.setSeconds(0);
+
+      const endTime = new Date();
+      endTime.setHours(end.split('.')[0]);
+      endTime.setMinutes(end.split('.')[1]);
+      endTime.setSeconds(0);
+
+      if (now >= startTime && now < endTime) {
+        current[type] = timeArray.indexOf([start, end]) + 1;
+        break;
+      }
+    }
+  };
+
   const current = {
     pair: 0,
     break: 0,
-  }
+  };
 
-  for (const pairIndex in PAIRS) {
-    const [start, end] = PAIRS[pairIndex];
-
-    // Set start and end time
-    const startTime = new Date();
-    startTime.setHours(start.split('.')[0]);
-    startTime.setMinutes(start.split('.')[1]);
-    startTime.setSeconds(0);
-
-    const endTime = new Date();
-    endTime.setHours(end.split('.')[0]);
-    endTime.setMinutes(end.split('.')[1]);
-    endTime.setSeconds(0);
-
-    // Set current pair number
-    if (now >= startTime && now < endTime) {
-      current.pair += parseInt(pairIndex) + 1;
-    }
-  }
-
-  for (const breakIndex in BREAKS) {
-    const [start, end] = BREAKS[breakIndex];
-
-    // Set start and end time
-    const startTime = new Date();
-    startTime.setHours(start.split('.')[0]);
-    startTime.setMinutes(start.split('.')[1]);
-    startTime.setSeconds(0);
-
-    const endTime = new Date();
-    endTime.setHours(end.split('.')[0]);
-    endTime.setMinutes(end.split('.')[1]);
-    endTime.setSeconds(0);
-
-    // Set current break number
-    if (now >= startTime && now < endTime) {
-      current.break += parseInt(breakIndex) + 1;
-    }
-  }
+  setCurrent(PAIRS, 'pair');
+  setCurrent(BREAKS, 'break');
 
   return current;
-}
+};
+
 
 // Parse time in milliseconds to human-readable format
 const parseTime = (time) => {
