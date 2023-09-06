@@ -71,8 +71,8 @@ const parseTime = (time) => {
 
   // Return time in format "1 год 2 хв 3 с" or "2 хв 3 с"
   return hours
-    ? `${hours} год ${mins} хв ${secs < 10 ? '0' + secs : secs} с`
-    : `${mins} хв ${secs < 10 ? '0' + secs : secs} с`;
+    ? `${hours} год ${mins} хв ${secs} с`
+    : `${mins} хв ${secs} с`;
 };
 
 const sortPairs = (pairsList) => {
