@@ -45,7 +45,7 @@ const getCurrent = () => {
       endTime.setSeconds(0);
 
       if (now >= startTime && now < endTime) {
-        current[type] = timeArray.indexOf([start, end]) + 1;
+        current[type] = 1;
         break;
       }
     }
