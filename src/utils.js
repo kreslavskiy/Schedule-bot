@@ -5,9 +5,11 @@ const { PAIRS, BREAKS, LATIN_TO_CYRILLIC } = require('./collections.js');
 const getLeftTime = () => {
   const now = new Date();
 
-  // If it's a pair
-  for (let i = 0; i < PAIRS.length; i++) {
-    const [start, end] = PAIRS[i];
+  const pairsAndBreaks = [...PAIRS, ...BREAKS];
+
+  // If it's a pair or a break
+  for (let i = 0; i < pairsAndBreaks.length; i++) {
+    const [start, end] = pairsAndBreaks[i];
 
     // Set start and end time
     const startTime = new Date();
@@ -20,28 +22,7 @@ const getLeftTime = () => {
     endTime.setMinutes(end.split('.')[1]);
     endTime.setSeconds(0);
 
-    // Return time left to the end of the pair
-    if (now >= startTime && now < endTime) {
-      return endTime - now;
-    }
-  }
-
-  // If it's a break
-  for (let i = 0; i < BREAKS.length; i++) {
-    const [start, end] = BREAKS[i];
-
-    // Set start and end time
-    const startTime = new Date();
-    startTime.setHours(start.split('.')[0]);
-    startTime.setMinutes(start.split('.')[1]);
-    startTime.setSeconds(0);
-
-    const endTime = new Date();
-    endTime.setHours(end.split('.')[0]);
-    endTime.setMinutes(end.split('.')[1]);
-    endTime.setSeconds(0);
-
-    // Return time left to the end of the break
+    // Return time left to the end of the pair or break
     if (now >= startTime && now < endTime) {
       return endTime - now;
     }
