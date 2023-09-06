@@ -212,11 +212,11 @@ bot.command('left', async ctx => {
   const current = getCurrent(); // Determine if it's a break or a pair
 
   if (current.pair) {
-    ctx.reply(`До початку перерви залишилось ${parseTime(leftTime)}.`);
+    ctx.reply(`До перерви залишилось ${parseTime(leftTime)}.`);
   }
 
   if (current.break) {
-    ctx.reply(`До початку пари залишилось ${parseTime(leftTime)}.`);
+    ctx.reply(`До пари залишилось ${parseTime(leftTime)}.`);
   }
 })
 
