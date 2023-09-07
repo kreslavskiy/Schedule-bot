@@ -32,10 +32,4 @@ const findGroup = async (searchedGroup) => {
   }
 };
 
-const getTime = async () => {
-  const time = await axios.get('https://timeapi.io/api/Time/current/zone?timeZone=Europe/Kiev')
-    .then(res => res.data);
-  return time.dateTime;
-};
-
-module.exports = { findGroup, getSchedule, currentTime, getTime };
+module.exports = { findGroup, getSchedule, currentTime };
