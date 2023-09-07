@@ -12,6 +12,7 @@ const PAIRS = [
 
 // Breaks start and end time
 const BREAKS = [
+  ['6.00', '8.30'],
   ['10.05', '10.25'],
   ['12.00', '12.20'],
   ['13.55', '14.15'],
