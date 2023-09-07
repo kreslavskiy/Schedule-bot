@@ -217,6 +217,10 @@ bot.command('left', async ctx => {
   if (current.break) {
     ctx.reply(`До пари залишилось ${parseTime(leftTime)}.`);
   }
+
+  if (!current.pair && !current.break) {
+    ctx.reply('У вас шо, пара зараз??');
+  }
 })
 
 bot.command('week', async ctx => {
