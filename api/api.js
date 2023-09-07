@@ -25,11 +25,7 @@ const currentTime = async () => {
 
 const findGroup = async (searchedGroup) => {
   const groups = await getGroupList();
-  for (const group of groups) {
-    if (group.name === searchedGroup) {
-      return group;
-    }
-  }
+  return groups.find((group) => group.name === searchedGroup);
 };
 
 module.exports = { findGroup, getSchedule, currentTime };
