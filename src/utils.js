@@ -78,7 +78,7 @@ const sortPairs = (pairsList) => {
 }
 
 const validateGroupName = (groupName) => {
-  const normalized = groupName.replace(/[._-\s]/g, '');
+  const normalized = groupName.replace(/[._\-\s]/g, '');
 
   let validated = normalized
     .slice(0, 2)
