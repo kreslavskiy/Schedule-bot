@@ -1,6 +1,21 @@
 'use strict';
 const { PAIRS, BREAKS, LATIN_TO_CYRILLIC } = require('./collections.js');
 
+// Set start and end time for a pair or a break
+const setTime = (start, end) => {
+  const startTime = new Date();
+  startTime.setHours(start.split('.')[0]);
+  startTime.setMinutes(start.split('.')[1]);
+  startTime.setSeconds(0);
+
+  const endTime = new Date();
+  endTime.setHours(end.split('.')[0]);
+  endTime.setMinutes(end.split('.')[1]);
+  endTime.setSeconds(0);
+
+  return [startTime, endTime];
+}
+
 // Get time left to the end of the current pair or break
 const getLeftTime = () => {
   const now = new Date();
@@ -11,16 +26,7 @@ const getLeftTime = () => {
   for (let i = 0; i < pairsAndBreaks.length; i++) {
     const [start, end] = pairsAndBreaks[i];
 
-    // Set start and end time
-    const startTime = new Date();
-    startTime.setHours(start.split('.')[0]);
-    startTime.setMinutes(start.split('.')[1]);
-    startTime.setSeconds(0);
-
-    const endTime = new Date();
-    endTime.setHours(end.split('.')[0]);
-    endTime.setMinutes(end.split('.')[1]);
-    endTime.setSeconds(0);
+    const [startTime, endTime] = setTime(start, end);
 
     // Return time left to the end of the pair or break
     if (now >= startTime && now < endTime) {
@@ -34,15 +40,7 @@ const getCurrent = () => {
 
   const setCurrent = (timeArray, type) => {
     for (const [start, end] of timeArray) {
-      const startTime = new Date();
-      startTime.setHours(start.split('.')[0]);
-      startTime.setMinutes(start.split('.')[1]);
-      startTime.setSeconds(0);
-
-      const endTime = new Date();
-      endTime.setHours(end.split('.')[0]);
-      endTime.setMinutes(end.split('.')[1]);
-      endTime.setSeconds(0);
+      const [startTime, endTime] = setTime(start, end);
 
       if (now >= startTime && now < endTime) {
         current[type] = 1;
