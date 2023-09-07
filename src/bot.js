@@ -309,7 +309,7 @@ bot.command('nextweek', async ctx => {
 });
 
 bot.command('getTime', async ctx => {
-  const now = currentTime()
+  const now = await currentTime();
   ctx.reply(now);
 })
 
