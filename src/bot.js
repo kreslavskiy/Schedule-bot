@@ -308,4 +308,9 @@ bot.command('nextweek', async ctx => {
   }
 });
 
+bot.command('getTime', async ctx => {
+  const now = currentTime()
+  ctx.reply(now);
+})
+
 bot.launch().then(() => console.log('Bot has successfully started!'));
