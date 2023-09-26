@@ -1,5 +1,7 @@
 'use strict';
 const { PAIRS, BREAKS, LATIN_TO_CYRILLIC } = require('./collections.js');
+const {getSchedule} = require("../api/api");
+const {WEEKDAYS, TIMETABLE} = require("./collections");
 
 // Set start and end time for a pair or a break
 const setTime = (start, end) => {
@@ -94,10 +96,33 @@ const validateGroupName = (groupName) => {
   return validated;
 };
 
+const getScheduleForWeek = async (group, week) => {
+  const schedule = (await getSchedule(group.groupId))[week];
+
+  let message = '';
+  let dayCounter = 0;
+
+  for (const day of schedule) {
+    message += `\n*${WEEKDAYS[dayCounter]}*\n`;
+    dayCounter++;
+    if (day.pairs.length) {
+      for (const pair of sortPairs(day)) {
+        message += `${TIMETABLE[pair.time]} ` +  pair.name + ` (${pair.type})\n`;
+      }
+    } else {
+      const emoji = String.fromCodePoint(0x1F973);
+      message += `_Пар немає, вихідний ${emoji}_\n`;
+    }
+  }
+
+  return message;
+}
+
 module.exports = {
   getLeftTime,
   getCurrent,
   sortPairs,
   parseTime,
   validateGroupName,
+  getScheduleForWeek,
 };
