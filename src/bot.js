@@ -272,7 +272,7 @@ bot.command('nextweek', async ctx => {
    
     const now = await currentTime();
 
-    let week = now.currentWeek === 1 ? 'scheduleFirstWeek' : 'scheduleSecondWeek';
+    let week = now.currentWeek === 1 ? 'scheduleSecondWeek' : 'scheduleFirstWeek';
 
     const schedule = (await getSchedule(group.groupId))[week];
 
