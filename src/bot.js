@@ -4,7 +4,7 @@ const { Telegraf } = require('telegraf');
 const { MongoClient } = require('mongodb');
 const { findGroup, getSchedule, currentTime } = require('../api/api.js');
 const { TIMETABLE, WEEKDAYS } = require('./collections.js');
-const { getLeftTime, getCurrent, sortPairs, parseTime, validateGroupName } = require('./utils.js');
+const { getLeftTime, getCurrent, sortPairs, parseTime, validateGroupName, getScheduleForWeek } = require('./utils.js');
 require('dotenv').config();
 
 const bot = new Telegraf(process.env.BOT_TOKEN);
@@ -13,6 +13,9 @@ const mongo = new MongoClient(process.env.DB_URL);
 const connect = (async () => await mongo.connect())().then(
   console.log('Connected to database')
 );
+
+const firstWeek = 'scheduleFirstWeek';
+const secondWeek = 'scheduleSecondWeek';
 
 bot.telegram.setMyCommands(
   [
@@ -174,9 +177,6 @@ bot.command('tomorrow', async (ctx) => {
 
     const schedule = await getSchedule(group.groupId);
 
-    const firstWeek = 'scheduleFirstWeek';
-    const secondWeek = 'scheduleSecondWeek';
-
     const sunday = 7;
 
     let week = now.currentWeek === 1 ? firstWeek : secondWeek;
@@ -235,29 +235,12 @@ bot.command('week', async ctx => {
 
     const now = await currentTime();
 
-    let week = now.currentWeek === 1 ? 'scheduleFirstWeek' : 'scheduleSecondWeek';
+    const week = now.currentWeek === 1 ? firstWeek : secondWeek;
 
-    const schedule = (await getSchedule(group.groupId))[week];
+    const schedule = await getScheduleForWeek(group, week);
 
-    let message = '';
-    let dayCounter = 0;
-  
-    for (const day of schedule) {
-      message += `\n*${WEEKDAYS[dayCounter]}*\n`;
-      dayCounter++;
-      if (day.pairs.length) {
-        for (const pair of sortPairs(day)) {
-          message += `${TIMETABLE[pair.time]} ` +  pair.name + ` (${pair.type})\n`;
-        }
-      } else {
-        const emoji = String.fromCodePoint(0x1F973);
-        message += `_Пар немає, вихідний ${emoji}_\n`;
-      }
-    }
-  
-    ctx.replyWithMarkdown(message);
+    ctx.replyWithMarkdown(schedule);
   } catch (err) {
-    console.log(err);
     ctx.reply('Помилка!');
   }
 });
@@ -265,36 +248,19 @@ bot.command('week', async ctx => {
 bot.command('nextweek', async ctx => {
   try {
     const groups = mongo.db().collection('group-list');
-  
+
     const group = await groups.findOne({
       chatId: ctx.update.message.chat.id,
     });
-   
+
     const now = await currentTime();
 
-    let week = now.currentWeek === 1 ? 'scheduleFirstWeek' : 'scheduleSecondWeek';
+    const week = now.currentWeek === 1 ? secondWeek : firstWeek;
 
-    const schedule = (await getSchedule(group.groupId))[week];
+    const schedule = await getScheduleForWeek(group, week);
 
-    let message = '';
-    let dayCounter = 0;
-  
-    for (const day of schedule) {
-      message += `\n*${WEEKDAYS[dayCounter]}*\n`;
-      dayCounter++;
-      if (day.pairs.length) {
-        for (const pair of sortPairs(day)) {
-          message += `${TIMETABLE[pair.time]} ` +  pair.name + ` (${pair.type})\n`;
-        }
-      } else {
-        const emoji = String.fromCodePoint(0x1F973);
-        message += `_Пар немає, вихідний ${emoji}_\n`;
-      }
-    }
-  
-    ctx.replyWithMarkdown(message);
+    ctx.replyWithMarkdown(schedule);
   } catch (err) {
-    console.log(err);
     ctx.reply('Помилка!');
   }
 });
