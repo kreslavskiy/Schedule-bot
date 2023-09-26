@@ -128,7 +128,6 @@ bot.command('group', async (ctx) => {
     }
 
   } catch (err) {
-    console.log(err);
     ctx.reply('Не можу знайти цю групу, спробуйте ввести у форматі XX-XX', {
       reply_to_message_id: ctx.message.message_id,
     });
@@ -151,7 +150,6 @@ bot.command('today', async (ctx) => {
 
     ctx.replyWithMarkdown(schedule);
   } catch (err) {
-    console.log(err);
     ctx.reply('Спочатку оберіть групу за допомогою команди group', {
       reply_to_message_id: ctx.message.message_id,
     });
@@ -180,7 +178,6 @@ bot.command('tomorrow', async (ctx) => {
 
     ctx.replyWithMarkdown(schedule);
   } catch (err) {
-    console.log(err);
     ctx.reply('Спочатку оберіть групу за допомогою команди group', {
       reply_to_message_id: ctx.message.message_id,
     });
