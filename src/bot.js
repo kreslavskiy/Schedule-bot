@@ -135,6 +135,7 @@ bot.command('today', async (ctx) => {
     });
 
     const now = await currentTime();
+
     const schedule = await getSchedule(group.groupId);
 
     let week = now.currentWeek === 1 ? 'scheduleFirstWeek' : 'scheduleSecondWeek';
@@ -170,17 +171,18 @@ bot.command('tomorrow', async (ctx) => {
     });
 
     const now = await currentTime();
+
     const schedule = await getSchedule(group.groupId);
 
-    console.log(now);
+    const firstWeek = 'scheduleFirstWeek';
+    const secondWeek = 'scheduleSecondWeek';
 
-    let week = 'scheduleFirstWeek';
-    if (now.currentWeek === 2) {
-      week = 'scheduleSecondWeek';
-      if (!now.currentDay) week = 'scheduleFirstWeek';
+    const sunday = 7;
+
+    let week = now.currentWeek === 1 ? firstWeek : secondWeek;
+    if (now.currentDay === sunday) {
+      week = now.currentWeek === 1 ? secondWeek : firstWeek;
     }
-
-    if (!now.currentDay) week = 'scheduleSecondWeek';
 
     const todmorrowsPairs = sortPairs(schedule[week][now.currentDay]);
     let message = `*${WEEKDAYS[now.currentDay]}*` + '\n\n';
@@ -226,24 +228,17 @@ bot.command('left', async ctx => {
 bot.command('week', async ctx => {
   try {
     const groups = mongo.db().collection('group-list');
-  
+
     const group = await groups.findOne({
       chatId: ctx.update.message.chat.id,
     });
-  
-    const now = await currentTime();
-    let week = 'scheduleFirstWeek';
-    if (now.currentWeek === 2) {
-      week = 'scheduleSecondWeek';
-      if (!now.currentDay) week = 'scheduleFirstWeek';
-    } else if (now.currentWeek === 1) {
-      if (!now.currentDay) week = 'scheduleSecondWeek';
-    }
-    console.log(week);
 
+    const now = await currentTime();
+
+    let week = now.currentWeek === 1 ? 'scheduleFirstWeek' : 'scheduleSecondWeek';
 
     const schedule = (await getSchedule(group.groupId))[week];
-  
+
     let message = '';
     let dayCounter = 0;
   
@@ -276,15 +271,11 @@ bot.command('nextweek', async ctx => {
     });
    
     const now = await currentTime();
-    let week = 'scheduleSecondWeek';
-    if (now.currentWeek === 2) {
-      week = 'scheduleFirstWeek';
-      if (!now.currentDay) week = 'scheduleSecondWeek';
-    } else if (now.currentWeek === 1) {
-      if (!now.currentDay) week = 'scheduleFirstWeek';
-    }
+
+    let week = now.currentWeek === 1 ? 'scheduleFirstWeek' : 'scheduleSecondWeek';
+
     const schedule = (await getSchedule(group.groupId))[week];
-  
+
     let message = '';
     let dayCounter = 0;
   
