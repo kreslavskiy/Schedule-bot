@@ -2,12 +2,10 @@
 
 const { Telegraf } = require('telegraf');
 const { MongoClient } = require('mongodb');
-const { findGroup, getSchedule, currentTime } = require('../api/api.js');
-const { TIMETABLE, WEEKDAYS } = require('./collections.js');
+const { findGroup, currentTime } = require('../api/api.js');
 const {
   getLeftTime,
   getCurrent,
-  sortPairs,
   parseTime,
   validateGroupName,
   getScheduleForWeek,
