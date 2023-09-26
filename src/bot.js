@@ -151,7 +151,7 @@ bot.command('today', async (ctx) => {
 
     const schedule = await getScheduleForDay(group, week, now.currentDay - 1);
 
-    ctx.replyWithMarkdown(message);
+    ctx.replyWithMarkdown(schedule);
   } catch (err) {
     console.log(err);
     ctx.reply('Спочатку оберіть групу за допомогою команди group', {
