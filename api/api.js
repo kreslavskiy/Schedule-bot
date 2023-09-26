@@ -19,9 +19,12 @@ const getSchedule = async (groupId) => {
 const currentTime = async () => {
   // Temporary solution
   const today = new Date();
-  const startDate = new Date('2023-09-04');
+  const semesterStart = '2021-09-01';
+  const startDate = new Date(semesterStart);
 
-  const difference = Math.floor((today - startDate) / (1000 * 60 * 60 * 24 * 7));
+  const secondsToWeek = 1000 * 60 * 60 * 24 * 7;
+
+  const difference = Math.floor((today - startDate) / (secondsToWeek));
   const currentWeek = Math.floor(difference) % 2 + 1;
   // End of temporary solution
 

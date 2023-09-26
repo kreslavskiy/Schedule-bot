@@ -174,9 +174,14 @@ bot.command('tomorrow', async (ctx) => {
 
     const schedule = await getSchedule(group.groupId);
 
-    let week = now.currentWeek === 1 ? 'scheduleFirstWeek' : 'scheduleSecondWeek';
-    if (now.currentDay === 7) {
-      week = now.currentWeek === 1 ? 'scheduleSecondWeek' : 'scheduleFirstWeek';
+    const firstWeek = 'scheduleFirstWeek';
+    const secondWeek = 'scheduleSecondWeek';
+
+    const sunday = 7;
+
+    let week = now.currentWeek === 1 ? firstWeek : secondWeek;
+    if (now.currentDay === sunday) {
+      week = now.currentWeek === 1 ? secondWeek : firstWeek;
     }
 
     const todmorrowsPairs = sortPairs(schedule[week][now.currentDay]);
