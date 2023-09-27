@@ -2,9 +2,15 @@
 
 const { Telegraf } = require('telegraf');
 const { MongoClient } = require('mongodb');
-const { findGroup, getSchedule, currentTime } = require('../api/api.js');
-const { TIMETABLE, WEEKDAYS } = require('./collections.js');
-const { getLeftTime, getCurrent, sortPairs, parseTime, validateGroupName, getScheduleForWeek } = require('./utils.js');
+const { findGroup, currentTime } = require('../api/api.js');
+const {
+  getLeftTime,
+  getCurrent,
+  parseTime,
+  validateGroupName,
+  getScheduleForWeek,
+  getScheduleForDay
+} = require('./utils.js');
 require('dotenv').config();
 
 const bot = new Telegraf(process.env.BOT_TOKEN);
@@ -122,7 +128,6 @@ bot.command('group', async (ctx) => {
     }
 
   } catch (err) {
-    console.log(err);
     ctx.reply('Не можу знайти цю групу, спробуйте ввести у форматі XX-XX', {
       reply_to_message_id: ctx.message.message_id,
     });
@@ -139,26 +144,12 @@ bot.command('today', async (ctx) => {
 
     const now = await currentTime();
 
-    const schedule = await getSchedule(group.groupId);
+    const week = now.currentWeek === 1 ? firstWeek : secondWeek;
 
-    let week = now.currentWeek === 1 ? 'scheduleFirstWeek' : 'scheduleSecondWeek';
+    const schedule = await getScheduleForDay(group, week, now.currentDay - 1);
 
-    const todaysPairs = sortPairs(schedule[week][now.currentDay - 1]);
-    let message = `*${WEEKDAYS[now.currentDay - 1]}*` + '\n\n';
-
-    if (!todaysPairs) {
-      const emoji = String.fromCodePoint(0x1F973);
-      message += `_Пар немає, вихідний ${emoji}_`;
-    } else {
-      for (const pair of todaysPairs) {
-        message += `${TIMETABLE[pair.time]} ` + pair.name + ` (${pair.type})\n`;
-      }
-    }
-
-    ctx.replyWithMarkdown(message);
-
+    ctx.replyWithMarkdown(schedule);
   } catch (err) {
-    console.log(err);
     ctx.reply('Спочатку оберіть групу за допомогою команди group', {
       reply_to_message_id: ctx.message.message_id,
     });
@@ -175,32 +166,18 @@ bot.command('tomorrow', async (ctx) => {
 
     const now = await currentTime();
 
-    const schedule = await getSchedule(group.groupId);
-
     const sunday = 7;
 
     let week = now.currentWeek === 1 ? firstWeek : secondWeek;
     if (now.currentDay === sunday) {
       week = now.currentWeek === 1 ? secondWeek : firstWeek;
+      now.currentDay = 0;
     }
 
-    const todmorrowsPairs = sortPairs(schedule[week][now.currentDay]);
-    let message = `*${WEEKDAYS[now.currentDay]}*` + '\n\n';
+    const schedule = await getScheduleForDay(group, week, now.currentDay);
 
-    if (!todmorrowsPairs) {
-      const emoji = String.fromCodePoint(0x1F973);
-      message += `_Пар немає, вихідний ${emoji}_`;
-    } else {
-      for (const pair of todmorrowsPairs) {
-        message += `${TIMETABLE[pair.time]} ` +  pair.name + ` (${pair.type})\n`;
-      }
-    }
-
-
-    ctx.replyWithMarkdown(message);
-
+    ctx.replyWithMarkdown(schedule);
   } catch (err) {
-    console.log(err);
     ctx.reply('Спочатку оберіть групу за допомогою команди group', {
       reply_to_message_id: ctx.message.message_id,
     });

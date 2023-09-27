@@ -96,6 +96,24 @@ const validateGroupName = (groupName) => {
   return validated;
 };
 
+const getScheduleForDay = async (group, week, day) => {
+  const unsortedSchedule = (await getSchedule(group.groupId))[week][day];
+  const schedule = sortPairs(unsortedSchedule);
+
+  let message = `*${WEEKDAYS[now.currentDay - 1]}*` + '\n\n';
+
+  if (!schedule) {
+    const emoji = String.fromCodePoint(0x1F973);
+    return `_Пар немає, вихідний ${emoji}_`;
+  }
+
+  for (const pair of todaysPairs) {
+    message += `${TIMETABLE[pair.time]} ` + pair.name + ` (${pair.type})\n`;
+  }
+
+  return message;
+}
+
 const getScheduleForWeek = async (group, week) => {
   const schedule = (await getSchedule(group.groupId))[week];
 
@@ -125,4 +143,5 @@ module.exports = {
   parseTime,
   validateGroupName,
   getScheduleForWeek,
+  getScheduleForDay,
 };
