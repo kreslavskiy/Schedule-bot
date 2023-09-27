@@ -97,7 +97,8 @@ const validateGroupName = (groupName) => {
 };
 
 const getScheduleForDay = async (group, week, day) => {
-  const schedule = sortPairs((await getSchedule(group.groupId))[week][day]);
+  const unsortedSchedule = (await getSchedule(group.groupId))[week][day];
+  const schedule = sortPairs(unsortedSchedule);
 
   let message = `*${WEEKDAYS[now.currentDay - 1]}*` + '\n\n';
 
