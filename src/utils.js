@@ -100,7 +100,7 @@ const getScheduleForDay = async (group, week, day) => {
   const unsortedSchedule = (await getSchedule(group.groupId))[week][day];
   const schedule = sortPairs(unsortedSchedule);
 
-  let message = `*${WEEKDAYS[day - 1]}*` + '\n\n';
+  let message = `*${WEEKDAYS[day]}*` + '\n\n';
 
   if (!schedule) {
     const emoji = String.fromCodePoint(0x1F973);

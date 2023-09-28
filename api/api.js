@@ -33,7 +33,8 @@ const currentTime = async () => {
     .then((res) => res.data);
 
   // Temporary solution
-  time.data.currentWeek = currentWeek;
+  time.data.currentWeek = currentWeek; // 1 or 2
+  time.data.currentDay = today.getDay(); // Sunday: 0, Monday: 1, Tuesday: 2, etc.
   // End of temporary solution
 
   return time.data;
@@ -45,4 +46,3 @@ const findGroup = async (searchedGroup) => {
 };
 
 module.exports = { findGroup, getSchedule, currentTime };
-currentTime();

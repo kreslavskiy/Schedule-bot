@@ -166,12 +166,11 @@ bot.command('tomorrow', async (ctx) => {
 
     const now = await currentTime();
 
-    const sunday = 7;
+    const sunday = 0;
 
     let week = now.currentWeek === 1 ? firstWeek : secondWeek;
     if (now.currentDay === sunday) {
       week = now.currentWeek === 1 ? secondWeek : firstWeek;
-      now.currentDay = 0;
     }
 
     const schedule = await getScheduleForDay(group, week, now.currentDay);
