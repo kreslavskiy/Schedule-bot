@@ -19,7 +19,7 @@ const getSchedule = async (groupId) => {
 const currentTime = async () => {
   // Temporary solution
   const today = new Date();
-  const semesterStart = '2023-09-01';
+  const semesterStart = '2023-09-04';
   const startDate = new Date(semesterStart);
 
   const secondsToWeek = 1000 * 60 * 60 * 24 * 7;
@@ -33,7 +33,8 @@ const currentTime = async () => {
     .then((res) => res.data);
 
   // Temporary solution
-  time.data.currentWeek = currentWeek;
+  time.data.currentWeek = currentWeek; // 1 or 2
+  time.data.currentDay = today.getDay(); // Sunday: 0, Monday: 1, Tuesday: 2, etc.
   // End of temporary solution
 
   return time.data;
@@ -45,4 +46,3 @@ const findGroup = async (searchedGroup) => {
 };
 
 module.exports = { findGroup, getSchedule, currentTime };
-currentTime();
