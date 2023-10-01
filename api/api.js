@@ -19,7 +19,7 @@ const getSchedule = async (groupId) => {
 const currentTime = async () => {
   // Temporary solution
   const today = new Date();
-  const semesterStart = '2023-09-01';
+  const semesterStart = '2023-09-04';
   const startDate = new Date(semesterStart);
 
   const secondsToWeek = 1000 * 60 * 60 * 24 * 7;
