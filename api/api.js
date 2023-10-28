@@ -75,5 +75,3 @@ const findGroup = async (searchedGroup) => {
 };
 
 module.exports = { findGroup, getSchedule, currentTime };
-
-currentTime();
