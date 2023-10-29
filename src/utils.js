@@ -102,7 +102,7 @@ const getScheduleForDay = async (group, week, day) => {
 
   let message = `*${WEEKDAYS[day]}*` + '\n\n';
 
-  if (!schedule) {
+  if (!schedule || schedule.length === 0) {
     const emoji = String.fromCodePoint(0x1F973);
     return `_Пар немає, вихідний ${emoji}_`;
   }
