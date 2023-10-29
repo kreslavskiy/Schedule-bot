@@ -25,7 +25,7 @@ const currentTime = async () => {
 
   // Determine the current day (Sunday: 0, Monday: 1, Tuesday: 2, etc.) and current lesson
   const time = await axios
-    .get('https://api.campus.kpi.ua/api/time/current')
+    .get('https://api.campus.kpi.ua/time/current')
     .then((res) => res.data);
 
   // Rewrite the current week and day
