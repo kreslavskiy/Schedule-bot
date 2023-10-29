@@ -17,25 +17,20 @@ const getSchedule = async (groupId) => {
 };
 
 const currentTime = async () => {
-  // Temporary solution
+  // Determine the current week (1 or 2)
   const today = new Date();
-  const semesterStart = '2023-09-04';
-  const startDate = new Date(semesterStart);
+  const start = new Date('2023-09-04');
+  const daysDiff = (today - start) / (1000 * 60 * 60 * 24);
+  const currentWeek = Math.floor(daysDiff / 7) % 2 + 1;
 
-  const secondsToWeek = 1000 * 60 * 60 * 24 * 7;
-
-  const difference = Math.floor((today - startDate) / (secondsToWeek));
-  const currentWeek = Math.floor(difference) % 2 + 1;
-  // End of temporary solution
-
+  // Determine the current day (Sunday: 0, Monday: 1, Tuesday: 2, etc.) and current lesson
   const time = await axios
     .get('https://schedule.kpi.ua/api/time/current')
     .then((res) => res.data);
 
-  // Temporary solution
+  // Rewrite the current week and day
   time.data.currentWeek = currentWeek; // 1 or 2
   time.data.currentDay = today.getDay(); // Sunday: 0, Monday: 1, Tuesday: 2, etc.
-  // End of temporary solution
 
   return time.data;
 };
