@@ -57,6 +57,8 @@ bot.telegram.setMyCommands(
 );
 
 bot.help(ctx => {
+  const replyOptions = { reply_to_message_id: ctx.message.message_id };
+
   ctx.replyWithMarkdown(
     '/timetable – *подивитись розклад дзвінків*\n' +
     '/group _<код групи>_ – *змінити групу або подивитись обрану*\n' +
@@ -65,20 +67,24 @@ bot.help(ctx => {
     '/week – *розклад на цей тиждень*\n' +
     '/nextweek – *розклад на наступний тиждень*\n' +
     '/left – *подивитись скільки часу залишилось до початку пари або перерви*'
-  );
+  , replyOptions);
 })
 
 bot.command('timetable', ctx => {
+  const replyOptions = { reply_to_message_id: ctx.message.message_id };
+
   ctx.replyWithMarkdown(
     '_1 пара_:  08:30 — 10:05\n' +
     '_2 пара_:  10:25 — 12:00\n' +
     '_3 пара_:  12:20 — 13:55\n' +
     '_4 пара_:  14:15 — 15:50\n' +
     '_5 пара_:  16:10 — 17:45\n' +
-    '_6 пара_:  18:30 — 20:05');
+    '_6 пара_:  18:30 — 20:05', replyOptions);
 });
 
 bot.command('group', async (ctx) => {
+  const replyOptions = { reply_to_message_id: ctx.message.message_id };
+
   try {
     const groups = mongo.db().collection('group-list');
 
@@ -91,9 +97,7 @@ bot.command('group', async (ctx) => {
 
     if (!chat) {
 
-      ctx.reply(`Ви обрали групу ${group.name} (${group.faculty ? group.faculty : ''})`, {
-        reply_to_message_id: ctx.message.message_id,
-      });
+      ctx.reply(`Ви обрали групу ${group.name} (${group.faculty ? group.faculty : ''})`, replyOptions);
 
       await groups.insertOne({
         chatId: ctx.update.message.chat.id,
@@ -105,9 +109,7 @@ bot.command('group', async (ctx) => {
     } else {
       if (ctx.message.text.split(' ').slice(1).join(' ')) {
 
-        ctx.reply(`Ви обрали групу ${group.name} (${group.faculty ? group.faculty : ''})`, {
-          reply_to_message_id: ctx.message.message_id,
-        });
+        ctx.reply(`Ви обрали групу ${group.name} (${group.faculty ? group.faculty : ''})`, replyOptions);
 
         await groups.updateOne(
           { chatId: ctx.update.message.chat.id },
@@ -121,20 +123,18 @@ bot.command('group', async (ctx) => {
         );
 
       } else {
-        ctx.reply(`Обрана група: ${chat.groupName} (${chat.faculty})`, {
-          reply_to_message_id: ctx.message.message_id,
-        });
+        ctx.reply(`Обрана група: ${chat.groupName} (${chat.faculty})`, replyOptions);
       }
     }
 
   } catch (err) {
-    ctx.reply('Не можу знайти цю групу, спробуйте ввести у форматі XX-XX', {
-      reply_to_message_id: ctx.message.message_id,
-    });
+    ctx.reply('Не можу знайти цю групу, спробуйте ввести у форматі XX-XX', replyOptions);
   }
 });
 
 bot.command('today', async (ctx) => {
+  const replyOptions = { reply_to_message_id: ctx.message.message_id };
+
   try {
     const groups = mongo.db().collection('group-list');
 
@@ -148,15 +148,15 @@ bot.command('today', async (ctx) => {
 
     const schedule = await getScheduleForDay(group, week, now.currentDay - 1);
 
-    ctx.replyWithMarkdown(schedule);
+    ctx.replyWithMarkdown(schedule, replyOptions);
   } catch (err) {
-    ctx.reply('Спочатку оберіть групу за допомогою команди group', {
-      reply_to_message_id: ctx.message.message_id,
-    });
+    ctx.reply('Спочатку оберіть групу за допомогою команди group', replyOptions);
   }
 });
 
 bot.command('tomorrow', async (ctx) => {
+  const replyOptions = { reply_to_message_id: ctx.message.message_id };
+
   try {
     const groups = mongo.db().collection('group-list');
 
@@ -175,33 +175,35 @@ bot.command('tomorrow', async (ctx) => {
 
     const schedule = await getScheduleForDay(group, week, now.currentDay);
 
-    ctx.replyWithMarkdown(schedule);
+    ctx.replyWithMarkdown(schedule, replyOptions);
   } catch (err) {
-    ctx.reply('Спочатку оберіть групу за допомогою команди group', {
-      reply_to_message_id: ctx.message.message_id,
-    });
+    ctx.reply('Спочатку оберіть групу за допомогою команди group', replyOptions);
   }
 });
 
 bot.command('left', async ctx => {
+  const replyOptions = { reply_to_message_id: ctx.message.message_id };
+
   const now = new Date();
   const leftTime = getLeftTime(); // Left time in milliseconds
   const current = getCurrent(); // Determine if it's a break or a pair
 
   if (current.pair) {
-    ctx.reply(`До перерви залишилось ${parseTime(leftTime)}.`);
+    ctx.reply(`До перерви залишилось ${parseTime(leftTime)}.`, replyOptions);
   }
 
   if (current.break) {
-    ctx.reply(`До пари залишилось ${parseTime(leftTime)}.`);
+    ctx.reply(`До пари залишилось ${parseTime(leftTime)}.`, replyOptions);
   }
 
   if (!current.pair && !current.break) {
-    ctx.reply('У вас шо, пара зараз??');
+    ctx.reply('У вас шо, пара зараз??', replyOptions);
   }
 })
 
 bot.command('week', async ctx => {
+  const replyOptions = { reply_to_message_id: ctx.message.message_id };
+
   try {
     const groups = mongo.db().collection('group-list');
 
@@ -215,13 +217,15 @@ bot.command('week', async ctx => {
 
     const schedule = await getScheduleForWeek(group, week);
 
-    ctx.replyWithMarkdown(schedule);
+    ctx.replyWithMarkdown(schedule, replyOptions);
   } catch (err) {
-    ctx.reply('Помилка!');
+    ctx.reply('Помилка!', replyOptions);
   }
 });
 
 bot.command('nextweek', async ctx => {
+  const replyOptions = { reply_to_message_id: ctx.message.message_id };
+
   try {
     const groups = mongo.db().collection('group-list');
 
@@ -235,15 +239,17 @@ bot.command('nextweek', async ctx => {
 
     const schedule = await getScheduleForWeek(group, week);
 
-    ctx.replyWithMarkdown(schedule);
+    ctx.replyWithMarkdown(schedule, replyOptions);
   } catch (err) {
-    ctx.reply('Помилка!');
+    ctx.reply('Помилка!', replyOptions);
   }
 });
 
 bot.command('getTime', async ctx => {
+  const replyOptions = { reply_to_message_id: ctx.message.message_id };
+
   const now = await currentTime();
-  ctx.reply(now);
+  ctx.reply(now, replyOptions);
 })
 
 bot.launch().then(() => console.log('Bot has successfully started!'));
